@@ -18,7 +18,7 @@ def process_wav_files(speaker_id, wav_folder, transcript_file, top_folder):
 
 def main():
     top_folder = "./"
-    speaker_id = 1
+    speaker_id = 0
 
     for folder in sorted(os.listdir(top_folder)):
         folder_path = os.path.join(top_folder, folder)
