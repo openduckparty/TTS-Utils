@@ -10,9 +10,9 @@ def select_random_lines(input_file, output_file, total_lines, lines_to_select):
         for line in selected_lines:
             file.write(line)
 
-input_file = './blueac.txt'  # 원본 메모장 파일 경로
-output_file = './output.txt'  # 결과를 저장할 메모장 파일 경로
-total_lines = 9324  # 원본 메모장의 전체 줄 수
-lines_to_select = 93  # 선택할 줄 수
+input_file = './blueac.txt'
+output_file = './output.txt'
+total_lines = 9324
+lines_to_select = 93
 
 select_random_lines(input_file, output_file, total_lines, lines_to_select)
