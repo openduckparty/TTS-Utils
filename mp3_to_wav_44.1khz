@@ -1,1 +1,1 @@
-FOR /F "tokens=*" %G IN ('dir /b *.mp3') DO ffmpeg -i "%G" -ac 1 -ar 44100 "../wavs/%~nG.wav"
+FOR /F "tokens=*" %G IN ('dir /b *.mp3') DO ffmpeg -i "%G" -ac 1 -ar 44100 -acodec pcm_s16le "../wavs/%~nG.wav"
