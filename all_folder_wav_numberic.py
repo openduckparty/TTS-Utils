@@ -14,12 +14,12 @@ for folder in sub_folders:
     wavs_folder_path = os.path.join(folder, 'wavs')
 
     # wavs 폴더 내의 .wav 파일 목록을 얻습니다.
-    wav_files = glob.glob(os.path.join(wavs_folder_path, '*.ogg'))
+    wav_files = glob.glob(os.path.join(wavs_folder_path, '*.wav'))
 
     # .wav 파일들을 반복하면서 이름을 변경합니다.
     for index, wav_file in enumerate(wav_files, start=1):
         # 새 파일 이름을 생성합니다 (예: 0001.wav, 0002.wav, ...)
-        new_file_name = f"{index:04d}.ogg"
+        new_file_name = f"{index:04d}.wav"
 
         # 새 파일 경로를 생성합니다.
         new_file_path = os.path.join(wavs_folder_path, new_file_name)
