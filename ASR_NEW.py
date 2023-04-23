@@ -13,8 +13,8 @@ def process_wav_files(speaker_id, wav_folder, transcript_file, top_folder):
                     result = model.transcribe(file_path)
                 print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
                 f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
-                with open(os.path.join(top_folder, "bluearchive_train.txt"), "a", encoding='utf-8') as blueac_file:
-                    blueac_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
+                with open(os.path.join(top_folder, "bluearchive_train.txt"), "a", encoding='utf-8') as all_transcript_file:
+                    all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
 
 def main():
     top_folder = "./"
