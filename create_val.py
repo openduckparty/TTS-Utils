@@ -10,8 +10,8 @@ def select_random_lines(input_file, output_file, total_lines, lines_to_select):
         for line in selected_lines:
             file.write(line)
 
-input_file = './blueac.txt'
-output_file = './output.txt'
+input_file = './bluearchive_train.txt'
+output_file = './bluearchive_val.txt'
 total_lines = 9324
 lines_to_select = 93
 
