@@ -4,8 +4,8 @@ import os
 model = whisper.load_model("large") # large
 lang_lst = ['ko', 'korean']
 
-wav_dir_loc = '/content/drive/MyDrive/tts_datasets/tank/wavs'
-metadata_loc = '/content/drive/MyDrive/tts_datasets/tank/transcript.txt'
+wav_dir_loc = '/content/drive/MyDrive/tts_datasets/latte/wavs'
+metadata_loc = '/content/drive/MyDrive/tts_datasets/latte/transcript.txt'
 
 lst = os.listdir(wav_dir_loc)
 
