@@ -1,3 +1,7 @@
+#sys.argv[1] = ex) ko, ja, en, zh
+#sys.argv[2] = ex) korean, japanese, english, chinese
+#sys.argv[3] = ALL transcription saved in this .txt. insert model name
+
 import os
 import glob
 import shutil
@@ -156,6 +160,7 @@ def first_code():
 
 
 def second_code():
+
     parent_folder_path = './'
 
     sub_folders = [f.path for f in os.scandir(parent_folder_path) if f.is_dir()]
@@ -175,6 +180,7 @@ def second_code():
 
 
 def third_code(arg1, arg2, arg3):
+
     model = whisper.load_model("large")
     lang_lst = [{arg1}, {arg2}]
 
