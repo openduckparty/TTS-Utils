@@ -268,23 +268,23 @@ def fifth_code():
 def main():
 
     print("Running the first code")
-    time.sleep(2)
+    time.sleep(1)
     first_code()
 
     print("Running the second code")
-    time.sleep(2)
+    time.sleep(1)
     second_code()
 
     print("Running the third code")
-    time.sleep(2)
+    time.sleep(1)
     third_code(sys.argv[1], sys.argv[2], sys.argv[3])
 
     print("Running the forth code")
-    time.sleep(2)
+    time.sleep(1)
     fourth_code()
 
     print("Running the fifth code")
-    time.sleep(2)
+    time.sleep(1)
     fifth_code()
 
     print("All codes have been executed successfully")
