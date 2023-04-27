@@ -174,9 +174,9 @@ def second_code():
             print(f"Renamed '{wav_file}' to '{new_file_path}'")
 
 
-def third_code():
+def third_code(arg1, arg2, arg3):
     model = whisper.load_model("large")
-    lang_lst = [{sys.argv[1]}, {{sys.argv[2]}}]
+    lang_lst = [{arg1}, {arg2}]
 
     def process_wav_files(speaker_id, wav_folder, transcript_file, top_folder):
         with open(transcript_file, "w", encoding='utf-8') as f:
@@ -187,7 +187,7 @@ def third_code():
                         result = model.transcribe(file_path)
                     print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
                     f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
-                    with open(os.path.join(top_folder, f"{sys.argv[3]}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
+                    with open(os.path.join(top_folder, f"{arg3}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
                         all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
 
     def main():
@@ -202,8 +202,8 @@ def third_code():
                 process_wav_files(speaker_id, wav_folder, transcript_file, top_folder)
                 speaker_id += 1
         
-        input_file = f'./{sys.argv[3]}_train.txt'
-        output_file = f'./{sys.argv[3]}_val.txt'
+        input_file = f'./{arg3}_train.txt'
+        output_file = f'./{arg3}_val.txt'
 
         select_random_lines(input_file, output_file)
 
@@ -220,7 +220,8 @@ def third_code():
         with open(output_file, 'w', encoding='utf-8') as file:
             for line in selected_lines:
                 file.write(line)
-    pass
+
+    main()
 
 
 def fourth_code():
@@ -259,6 +260,7 @@ def fifth_code():
 
 
 def main():
+
     print("Running the first code")
     time.sleep(2)
     first_code()
@@ -269,7 +271,7 @@ def main():
 
     print("Running the third code")
     time.sleep(2)
-    third_code()
+    third_code(sys.argv[1], sys.argv[2], sys.argv[3])
 
     print("Running the forth code")
     time.sleep(2)
