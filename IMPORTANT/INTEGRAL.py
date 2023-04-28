@@ -1,6 +1,6 @@
 #sys.argv[1] = ex) ko, ja, en, zh
 #sys.argv[2] = ex) korean, japanese, english, chinese
-#sys.argv[3] = ALL transcription saved in this .txt. insert model name
+#sys.argv[3] = ALL transcription saved in this txt. insert model name
 
 import os
 import glob
