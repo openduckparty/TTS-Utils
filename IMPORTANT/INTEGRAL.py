@@ -255,17 +255,17 @@ def fifth_code(arg3):
     c = 0
     for i in f:
         values = i.split('|')
-        if len(values) != 2:
-                print(f"Skipping line: {i}")
-        continue
+        if len(values) != 3:
+            print(f"Skipping line: {i}")
+            continue
 
-    p, t = values
+        p, speaker_id, t = values
 
-    with contextlib.closing(wave.open(p, 'r')) as f:
+        with contextlib.closing(wave.open(p, 'r')) as f:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
-            c+=duration
+            c += duration
 
     print('Total Datasets Duration = ', c)
 
