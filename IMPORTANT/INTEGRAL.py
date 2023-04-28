@@ -13,9 +13,27 @@ import time
 import os
 import wave
 import contextlib
+import subprocess
 from tqdm import tqdm
 from shutil import rmtree
 from scipy.io import wavfile
+
+
+def preprocessing_code():
+    def convert_mp3_to_wav(root_dir):
+        for subdir, dirs, files in os.walk(root_dir):
+            for file in files:
+                if file.endswith(".mp3"):
+                    mp3_filepath = os.path.join(subdir, file)
+                    wav_filepath = os.path.join(subdir, "wavs", os.path.splitext(file)[0] + ".wav")
+                    print(f"Converting {mp3_filepath} to {wav_filepath}...")
+
+                    subprocess.run(["ffmpeg", "-i", mp3_filepath, "-ar", "44100", wav_filepath])
+
+    root_dir = "./"
+    convert_mp3_to_wav(root_dir)
+    print("All .mp3 files have been converted to .wav files.")
+
 
 def first_code():
 
@@ -271,6 +289,10 @@ def fifth_code(arg3):
 
 
 def main():
+
+    print("Running Audio Convertion(mp3 to wav, 44.1khz)")
+    time.sleep(1.5)
+    preprocessing_code()
 
     print("Running Audio Seperation...")
     time.sleep(1.5)
