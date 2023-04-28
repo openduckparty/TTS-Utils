@@ -244,8 +244,8 @@ def fourth_code():
     print("Completed!")
 
 
-def fifth_code():
-    f = open(f'./{sys.argv[3]}_train.txt', 'r', encoding='utf-8').read().split('\n')
+def fifth_code(arg3):
+    f = open(f'./{arg3}_train.txt', 'r', encoding='utf-8').read().split('\n')
 
     l = []
     import os
@@ -254,9 +254,14 @@ def fifth_code():
 
     c = 0
     for i in f:
-        p, t = i.split('|')
+        values = i.split('|')
+        if len(values) != 2:
+                print(f"Skipping line: {i}")
+        continue
 
-        with contextlib.closing(wave.open(p, 'r')) as f:
+    p, t = values
+
+    with contextlib.closing(wave.open(p, 'r')) as f:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
