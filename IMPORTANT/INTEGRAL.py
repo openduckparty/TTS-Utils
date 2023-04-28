@@ -256,8 +256,8 @@ def fourth_code():
     top_folder_path = './'
     sub_folders = [f for f in os.listdir(top_folder_path) if os.path.isdir(os.path.join(top_folder_path, f))]
 
-    output = 'speakers: [\n    '
-    output += ', '.join([f'"{folder}"' for folder in sub_folders])
+    output = '[\n '
+    output += ',\n '.join([f'"{folder}"' for folder in sub_folders])
     output += '\n]'
 
     with open('speakers_list.txt', 'w', encoding='utf-8') as file:
