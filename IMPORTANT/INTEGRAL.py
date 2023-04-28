@@ -350,8 +350,8 @@ def create_config():
     ]
 }
 
-with open("config.json", "w", encoding="utf-8") as file:
-    json.dump(config, file, ensure_ascii=False, indent=2)
+    with open("config.json", "w", encoding="utf-8") as file:
+        json.dump(config, file, ensure_ascii=False, indent=2)
 
 
 def sixth_code(arg1, arg3):
