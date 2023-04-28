@@ -10,6 +10,9 @@ import random
 import whisper
 import sys
 import time
+import os
+import wave
+import contextlib
 from tqdm import tqdm
 from shutil import rmtree
 from scipy.io import wavfile
@@ -248,9 +251,6 @@ def fifth_code(arg3):
     f = open(f'./{arg3}_train.txt', 'r', encoding='utf-8').read().split('\n')
 
     l = []
-    import os
-    import wave
-    import contextlib
 
     c = 0
     for i in f:
