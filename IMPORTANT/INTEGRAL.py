@@ -445,6 +445,8 @@ def main():
     time.sleep(1.5)
     third_code(sys.argv[1], sys.argv[2], sys.argv[3])
 
+    print("")
+
     print("Running Create Speakers ID...")
     time.sleep(1.5)
     fourth_code()
@@ -461,7 +463,7 @@ def main():
     time.sleep(1.5)
     fifth_code()
 
-    print("All codes have been executed successfully")
+    print("All codes have been executed successfully.")
 
 
 if __name__ == "__main__":
