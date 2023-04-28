@@ -396,23 +396,23 @@ def sixth_code(arg1, arg3):
 
     def update_symbols_file(text_cleaners_type):
             with open("../vits/text/symbols.py", "r", encoding="utf-8") as file:
-            symbols_lines = file.readlines()
+                symbols_lines = file.readlines()
 
-        new_symbols_lines = []
-        for line in symbols_lines:
-            if text_cleaners_type in line:
-                new_symbols_lines.append(line)
-                continue
+                new_symbols_lines = []
+                for line in symbols_lines:
+                        if text_cleaners_type in line:
+                            new_symbols_lines.append(line)
+                            continue
 
-            if any(tc_type in line for tc_type in ["korean_cleaners", "japanese_cleaners2"]):
-                if "'''" in line:
-                    new_symbols_lines.append("'''\n")
-                continue
+                        if any(tc_type in line for tc_type in ["korean_cleaners", "japanese_cleaners2", "cjke_cleaners2"]):
+                            if "'''" in line:
+                                new_symbols_lines.append("'''\n")
+                            continue
 
-            new_symbols_lines.append(line)
+                        new_symbols_lines.append(line)
 
-        with open("../vits/text/symbols.py", "w", encoding="utf-8") as file:
-            file.writelines(new_symbols_lines)
+                        with open("../vits/text/symbols.py", "w", encoding="utf-8") as file:
+                            file.writelines(new_symbols_lines)
 
     # Update symbols.py file based on the text_cleaners_type
     if arg1 == "ko":
@@ -420,9 +420,9 @@ def sixth_code(arg1, arg3):
     elif arg1 == "jp":
         update_symbols_file("japanese_cleaners2")
     elif arg1 == "en":
-        update_symnols_file("cjke_cleaners2")
+        update_symbols_file("cjke_cleaners2")
     elif arg1 == "zh":
-    update_symnols_file("cjke_cleaners2")
+        update_symbols_file("cjke_cleaners2")
 
 
 
@@ -445,8 +445,6 @@ def main():
     time.sleep(1.5)
     third_code(sys.argv[1], sys.argv[2], sys.argv[3])
 
-    print("")
-
     print("Running Create Speakers ID...")
     time.sleep(1.5)
     fourth_code()
@@ -461,7 +459,7 @@ def main():
 
     print("Running Total Datasets Duration...")
     time.sleep(1.5)
-    fifth_code()
+    fifth_code(sys.argv[3])
 
     print("All codes have been executed successfully.")
 
