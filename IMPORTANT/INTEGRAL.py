@@ -272,24 +272,24 @@ def fifth_code(arg3):
 
 def main():
 
-    print("Running the first code")
-    time.sleep(1)
+    print("Running Audio Seperation...")
+    time.sleep(1.5)
     first_code()
 
-    print("Running the second code")
-    time.sleep(1)
+    print("Running Audio Files Rename...")
+    time.sleep(1.5)
     second_code()
 
-    print("Running the third code")
-    time.sleep(1)
+    print("Running Whisper ASR...")
+    time.sleep(1.5)
     third_code(sys.argv[1], sys.argv[2], sys.argv[3])
 
-    print("Running the forth code")
-    time.sleep(1)
+    print("Running Create Speakers ID...")
+    time.sleep(1.5)
     fourth_code()
 
-    print("Running the fifth code")
-    time.sleep(1)
+    print("Running Total Datasets Duration...")
+    time.sleep(1.5)
     fifth_code()
 
     print("All codes have been executed successfully")
