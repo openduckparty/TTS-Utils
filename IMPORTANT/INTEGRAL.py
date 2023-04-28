@@ -14,6 +14,7 @@ import os
 import wave
 import contextlib
 import subprocess
+import json
 from tqdm import tqdm
 from shutil import rmtree
 from scipy.io import wavfile
@@ -288,6 +289,49 @@ def fifth_code(arg3):
     print('Total Datasets Duration = ', c)
 
 
+def sixth_code(arg1, arg3):
+    with open("config.json", "r", encoding="utf-8") as file:
+        config = json.load(file)
+
+    config["data"]["training_files"] = f"../{arg3}_datasets/{arg3}_train.txt.cleaned"
+    config["data"]["validation_files"] = f"../{arg3}_datasets/{arg3}_val.txt.cleaned"
+
+    wav_files = []
+    for root, _, files in os.walk('.'):
+        for file in files:
+            if file.endswith('.wav'):
+                wav_files.append(os.path.join(root, file))
+
+    if wav_files:
+        random_wav = random.choice(wav_files)
+        with wave.open(random_wav, 'rb') as wav_file:
+            sample_rate = wav_file.getframerate()
+
+        config["data"]["sampling_rate"] = sample_rate
+
+    with open("speakers_list.txt", "r", encoding="utf-8") as file:
+        speakers = [line.strip() for line in file.readlines()]
+
+    config["speakers"] = speakers
+
+    if arg1 == "ko":
+        config["data"]["text_cleaners"] = ["korean_cleaners"]
+    elif arg1 == "jp":
+        config["data"]["text_cleaners"] = ["japanese_cleaners2"]
+    elif arg1 == "en":
+        config["data"]["text_cleaners"] = ["cjke_cleaners2"]
+    elif arg1 == "zh":
+        config["data"]["text_cleaners"] = ["cjke_cleaners2"]
+
+    subdirs = [d for d in os.listdir('.') if os.path.isdir(d)]
+    config["data"]["n_speakers"] = len(subdirs)
+
+    with open("config.json", "w", encoding="utf-8") as file:
+        json.dump(config, file, ensure_ascii=False, indent=2)
+
+
+
+
 def main():
 
     print("Running Audio Convertion(mp3 to wav, 44.1khz)")
@@ -309,6 +353,10 @@ def main():
     print("Running Create Speakers ID...")
     time.sleep(1.5)
     fourth_code()
+
+    print("Running Create Config.json...")
+    time.sleep(1.5)
+    sixth_code(sys.argv[1], sys.argv[3])
 
     print("Running Total Datasets Duration...")
     time.sleep(1.5)
