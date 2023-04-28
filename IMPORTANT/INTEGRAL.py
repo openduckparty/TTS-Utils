@@ -289,6 +289,71 @@ def fifth_code(arg3):
     print('Total Datasets Duration = ', c)
 
 
+def create_config():
+    config = {
+    "train": {
+        "log_interval": 200,
+        "eval_interval": 1000,
+        "seed": 1234,
+        "epochs": 10000,
+        "learning_rate": 2e-4,
+        "betas": [0.8, 0.99],
+        "eps": 1e-9,
+        "batch_size": 32,
+        "fp16_run": True,
+        "lr_decay": 0.999875,
+        "segment_size": 8192,
+        "init_lr_ratio": 1,
+        "warmup_epochs": 0,
+        "c_mel": 45,
+        "c_kl": 1.0
+    },
+    "data": {
+        "training_files": "",
+        "validation_files": "",
+        "text_cleaners": [],
+        "max_wav_value": 32768.0,
+        "sampling_rate": 22050,
+        "filter_length": 1024,
+        "hop_length": 256,
+        "win_length": 1024,
+        "n_mel_channels": 80,
+        "mel_fmin": 0.0,
+        "mel_fmax": None,
+        "add_blank": True,
+        "n_speakers": 6,
+        "cleaned_text": True
+    },
+    "model": {
+        "inter_channels": 192,
+        "hidden_channels": 192,
+        "filter_channels": 768,
+        "n_heads": 2,
+        "n_layers": 6,
+        "kernel_size": 3,
+        "p_dropout": 0.1,
+        "resblock": "1",
+        "resblock_kernel_sizes": [3, 7, 11],
+        "resblock_dilation_sizes": [[1, 3, 5], [1, 3, 5], [1, 3, 5]],
+        "upsample_rates": [8, 8, 2, 2],
+        "upsample_initial_channel": 512,
+        "upsample_kernel_sizes": [16, 16, 4, 4],
+        "n_layers_q": 3,
+        "use_spectral_norm": False,
+        "gin_channels": 256
+    },
+    "speakers": ["\uc218\uc544", "\ubbf8\ubbf8\ub974", "\uc544\ub9b0", "\uc5f0\ud654", "\uc720\ud654", "\uc120\ubc30"],
+    "symbols": [
+        "_", ",", ".", "!", "?", "\u2026", "~", "\u3131", "\u3134", "\u3137", "\u3139", "\u3141", "\u3142", "\u3145",
+        "\u3147", "\u3148", "\u314a", "\u314b", "\u314c", "\u314d", "\u314e", "\u3132", "\u3138", "\u3143", "\u3146",
+        "\u3149", "\u314f", "\u3153", "\u3157", "\u315c", "\u3161", "\u3163", "\u3150", "\u3154", " "
+    ]
+}
+
+with open("config.json", "w", encoding="utf-8") as file:
+    json.dump(config, file, ensure_ascii=False, indent=2)
+
+
 def sixth_code(arg1, arg3):
     with open("config.json", "r", encoding="utf-8") as file:
         config = json.load(file)
@@ -329,6 +394,36 @@ def sixth_code(arg1, arg3):
     with open("config.json", "w", encoding="utf-8") as file:
         json.dump(config, file, ensure_ascii=False, indent=2)
 
+    def update_symbols_file(text_cleaners_type):
+            with open("../vits/text/symbols.py", "r", encoding="utf-8") as file:
+            symbols_lines = file.readlines()
+
+        new_symbols_lines = []
+        for line in symbols_lines:
+            if text_cleaners_type in line:
+                new_symbols_lines.append(line)
+                continue
+
+            if any(tc_type in line for tc_type in ["korean_cleaners", "japanese_cleaners2"]):
+                if "'''" in line:
+                    new_symbols_lines.append("'''\n")
+                continue
+
+            new_symbols_lines.append(line)
+
+        with open("../vits/text/symbols.py", "w", encoding="utf-8") as file:
+            file.writelines(new_symbols_lines)
+
+    # Update symbols.py file based on the text_cleaners_type
+    if arg1 == "ko":
+        update_symbols_file("korean_cleaners")
+    elif arg1 == "jp":
+        update_symbols_file("japanese_cleaners2")
+    elif arg1 == "en":
+        update_symnols_file("cjke_cleaners2")
+    elif arg1 == "zh":
+    update_symnols_file("cjke_cleaners2")
+
 
 
 
@@ -354,7 +449,11 @@ def main():
     time.sleep(1.5)
     fourth_code()
 
-    print("Running Create Config.json...")
+    print("Running Create config.json...")
+    time.sleep(1.5)
+    create_config()
+
+    print("Running Edit config.json...")
     time.sleep(1.5)
     sixth_code(sys.argv[1], sys.argv[3])
 
