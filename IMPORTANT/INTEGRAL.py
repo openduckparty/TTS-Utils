@@ -457,6 +457,16 @@ def vits_preproess_code(arg1, arg3):
     print("stderr:", result.stderr)
 
 
+def rename_config_json(arg3):
+    old_name = "config.json"
+    new_name = f"{arg3}.json"
+
+    if os.path.exists(old_name):
+        os.rename(old_name, new_name)
+        print(f"Renamed {old_name} to {new_name}")
+    else:
+        print(f"{old_name} not found")
+
 
 def main():
 
@@ -485,22 +495,27 @@ def main():
     vits_preproess_code(sys.argv[1], sys.argv[3])
     print("The cleaner has successfully processed the text file.\n")
 
-    print("Running Create Speakers ID...")
+    print("Creating Speakers ID...")
     time.sleep(1.5)
     fourth_code()
     print("Successfully created speaker ID.\n")
 
-    print("Running Create config.json...")
+    print("Creating config.json...")
     time.sleep(1.5)
     create_config()
     print("Successfully created config.json.\n")
 
-    print("Running Edit config.json...")
+    print("Editing config.json...")
     time.sleep(1.5)
     sixth_code(sys.argv[1], sys.argv[3])
     print("Successfully edited config.json.\n")
 
-    print("Running Total Datasets Duration...")
+    print("Renaming config.json...")
+    time.sleep(1.5)
+    rename_config_json(sys.argv[3])
+    print("Successfully renamed config.json.")
+
+    print("Measuring Total Datasets Duration...")
     time.sleep(1.5)
     fifth_code(sys.argv[3])
     print("Successfully measured dataset length.\n")
