@@ -10,14 +10,15 @@ import random
 import whisper
 import sys
 import time
-import os
 import wave
 import contextlib
 import subprocess
 import json
+import ast
 from tqdm import tqdm
 from shutil import rmtree
 from scipy.io import wavfile
+from langdetect import detect
 
 
 def preprocessing_code():
@@ -33,7 +34,6 @@ def preprocessing_code():
 
     root_dir = "./"
     convert_mp3_to_wav(root_dir)
-    print("All .mp3 files have been converted to .wav files.")
 
 
 def first_code():
@@ -143,10 +143,31 @@ def first_code():
 
 
     def process_folders(parent_folder):
+    # If there's any audio file with a length of 1 minute or less, exit the script
+        if check_audio_length(parent_folder):
+            print("An audio file with a length of 1 minute or less was found. Exiting...")
+            time.sleep(1.5)
+            return
+
         for root, dirs, files in os.walk(parent_folder):
             if 'wavs' in dirs:
                 wav_folder = os.path.join(root, 'wavs')
                 process_wav_folder(wav_folder, root)
+
+    def check_audio_length(parent_folder):
+        for root, dirs, files in os.walk(parent_folder):
+            if 'wavs' in dirs:
+                wav_folder = os.path.join(root, 'wavs')
+                for wav_path in os.listdir(wav_folder):
+                    if wav_path.endswith(".wav"):
+                        wav_loc = os.path.join(wav_folder, wav_path)
+                        with wave.open(wav_loc, 'rb') as wav_file:
+                            n_frames = wav_file.getnframes()
+                            frame_rate = wav_file.getframerate()
+                            duration = n_frames / float(frame_rate)
+                            if duration <= 60:
+                                return True
+        return False
 
     def process_wav_folder(wav_folder, parent_folder):
         for wav_path in os.listdir(wav_folder):
@@ -213,10 +234,23 @@ def third_code(arg1, arg2, arg3):
                     file_path = os.path.join(wav_folder, wav_file)
                     with open(file_path, "rb") as audio_file:
                         result = model.transcribe(file_path)
-                    print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
-                    f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
-                    with open(os.path.join(top_folder, f"{arg3}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
-                        all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
+
+                    try:
+                        detected_lang = detect(result['text'].strip())
+
+                    except:
+
+                        print(f"Files with different languages requested and recognized: {wav_file}, text: {result['text'].strip()}")
+                        continue
+                    
+                    if (arg1 == "ko" and detected_lang != "ko") or (arg1 == "jp" and detected_lang != "jp") or (arg1 == "en" and detected_lang != "en") or (arg1 == "zh" and detected_lang != "zh"):
+                        continue
+
+                    else:
+                        print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
+                        f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
+                        with open(os.path.join(top_folder, f"{arg3}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
+                            all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
 
     def main():
         top_folder = "./"
@@ -256,14 +290,11 @@ def fourth_code():
     top_folder_path = './'
     sub_folders = [f for f in os.listdir(top_folder_path) if os.path.isdir(os.path.join(top_folder_path, f))]
 
-    output = '[\n '
-    output += ',\n '.join([f'"{folder}"' for folder in sub_folders])
-    output += '\n]'
+    output = ''
+    output += ', '.join([f'"{folder}"' for folder in sub_folders])
 
     with open('speakers_list.txt', 'w', encoding='utf-8') as file:
-        file.write(output)
-
-    print("Completed!")
+        file.write(output.replace('\\"', '"'))
 
 
 def fifth_code(arg3):
@@ -286,7 +317,7 @@ def fifth_code(arg3):
             duration = frames / float(rate)
             c += duration
 
-    print('Total Datasets Duration = ', c)
+    print("Total datasets length(seconds):", round(c, 2))
 
 
 def create_config():
@@ -342,12 +373,8 @@ def create_config():
         "use_spectral_norm": False,
         "gin_channels": 256
     },
-    "speakers": ["\uc218\uc544", "\ubbf8\ubbf8\ub974", "\uc544\ub9b0", "\uc5f0\ud654", "\uc720\ud654", "\uc120\ubc30"],
-    "symbols": [
-        "_", ",", ".", "!", "?", "\u2026", "~", "\u3131", "\u3134", "\u3137", "\u3139", "\u3141", "\u3142", "\u3145",
-        "\u3147", "\u3148", "\u314a", "\u314b", "\u314c", "\u314d", "\u314e", "\u3132", "\u3138", "\u3143", "\u3146",
-        "\u3149", "\u314f", "\u3153", "\u3157", "\u315c", "\u3161", "\u3163", "\u3150", "\u3154", " "
-    ]
+    "speakers": [],
+    "symbols": [' japanese_symbols: "_", ",", ".", "!", "?", "-", "~", "\u2026", "A", "E", "I", "N", "O", "Q", "U", "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "\u0283", "\u02a7", "\u02a6", "\u2193", "\u2191", " " //korean_symbols: "_", ",", ".", "!", "?", "\u2026", "~", "\u3131", "\u3134", "\u3137", "\u3139", "\u3141", "\u3142", "\u3145", "\u3147", "\u3148", "\u314a", "\u314b", "\u314c", "\u314d", "\u314e", "\u3132", "\u3138", "\u3143", "\u3146", "\u3149", "\u314f", "\u3153", "\u3157", "\u315c", "\u3161", "\u3163", "\u3150", "\u3154", " " //en/zh_symbols: "_", ",", ".", "!", "?", "-", "~", "\u2026", "N", "Q", "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "s", "t", "u", "v", "w", "x", "y", "z", "\u0251", "\u00e6", "\u0283", "\u0291", "\u00e7", "\u026f", "\u026a", "\u0254", "\u025b", "\u0279", "\u00f0", "\u0259", "\u026b", "\u0265", "\u0278", "\u028a", "\u027e", "\u0292", "\u03b8", "\u03b2", "\u014b", "\u0266", "\u207c", "\u02b0", "`", "^", "#", "*", "=", "\u02c8", "\u02cc", "\u2192", "\u2193", "\u2191", " " ']
 }
 
     with open("config.json", "w", encoding="utf-8") as file:
@@ -375,13 +402,18 @@ def sixth_code(arg1, arg3):
         config["data"]["sampling_rate"] = sample_rate
 
     with open("speakers_list.txt", "r", encoding="utf-8") as file:
-        speakers = [line.strip() for line in file.readlines()]
+        speakers = file.read().strip()
+
+    speakers = [s.strip().strip('"') for s in speakers.split(',')]
 
     config["speakers"] = speakers
 
+    with open("config.json", "w", encoding="utf-8") as file:
+        json.dump(config, file, ensure_ascii=False, indent=2)
+
     if arg1 == "ko":
         config["data"]["text_cleaners"] = ["korean_cleaners"]
-    elif arg1 == "jp":
+    elif arg1 == "ja":
         config["data"]["text_cleaners"] = ["japanese_cleaners2"]
     elif arg1 == "en":
         config["data"]["text_cleaners"] = ["cjke_cleaners2"]
@@ -394,36 +426,33 @@ def sixth_code(arg1, arg3):
     with open("config.json", "w", encoding="utf-8") as file:
         json.dump(config, file, ensure_ascii=False, indent=2)
 
-    def update_symbols_file(text_cleaners_type):
-            with open("../vits/text/symbols.py", "r", encoding="utf-8") as file:
-                symbols_lines = file.readlines()
 
-                new_symbols_lines = []
-                for line in symbols_lines:
-                        if text_cleaners_type in line:
-                            new_symbols_lines.append(line)
-                            continue
+def vits_preproess_code(arg1, arg3):
+    import subprocess
 
-                        if any(tc_type in line for tc_type in ["korean_cleaners", "japanese_cleaners2", "cjke_cleaners2"]):
-                            if "'''" in line:
-                                new_symbols_lines.append("'''\n")
-                            continue
-
-                        new_symbols_lines.append(line)
-
-                        with open("../vits/text/symbols.py", "w", encoding="utf-8") as file:
-                            file.writelines(new_symbols_lines)
-
-    # Update symbols.py file based on the text_cleaners_type
     if arg1 == "ko":
-        update_symbols_file("korean_cleaners")
-    elif arg1 == "jp":
-        update_symbols_file("japanese_cleaners2")
+        text_cleaners = "korean_cleaners"
+    elif arg1 == "ja":
+        text_cleaners = "japanese_cleaners2"
     elif arg1 == "en":
-        update_symbols_file("cjke_cleaners2")
+        text_cleaners = "cjke_cleaners2"
     elif arg1 == "zh":
-        update_symbols_file("cjke_cleaners2")
+        text_cleaners = "cjke_cleaners2"
+    else:
+        return
+    
+    script_path = "../vits/preprocess.py"
 
+    text_index = "2"
+    filelists_train = f'./{arg3}_train.txt'
+    filelists_val = f'./{arg3}_val.txt'
+    arg1 = text_cleaners
+
+    result = subprocess.run(["python", script_path, "--text_index", text_index, "--filelists", filelists_train, filelists_val, "--text_cleaners", arg1], capture_output=True, text=True)
+
+    print("Return code:", result.returncode)
+    print("stdout:", result.stdout)
+    print("stderr:", result.stderr)
 
 
 
@@ -432,34 +461,47 @@ def main():
     print("Running Audio Convertion(mp3 to wav, 44.1khz)")
     time.sleep(1.5)
     preprocessing_code()
+    print("All .mp3 files have been converted to .wav files.\n")
 
     print("Running Audio Seperation...")
     time.sleep(1.5)
     first_code()
+    print("All .wav files have been seperated.\n")
 
     print("Running Audio Files Rename...")
     time.sleep(1.5)
     second_code()
+    print("All .wav files have been renamed.\n")
 
     print("Running Whisper ASR...")
-    time.sleep(1.5)
+    time.sleep(0.5)
     third_code(sys.argv[1], sys.argv[2], sys.argv[3])
+    print("All .wav files have been processed.\n")
+
+    print("Running vits preprocess.py...")
+    time.sleep(1.5)
+    vits_preproess_code(sys.argv[1], sys.argv[3])
+    print("The cleaner has successfully processed the text file.\n")
 
     print("Running Create Speakers ID...")
     time.sleep(1.5)
     fourth_code()
+    print("Successfully created speaker ID.\n")
 
     print("Running Create config.json...")
     time.sleep(1.5)
     create_config()
+    print("Successfully created config.json.\n")
 
     print("Running Edit config.json...")
     time.sleep(1.5)
     sixth_code(sys.argv[1], sys.argv[3])
+    print("Successfully edited config.json.\n")
 
     print("Running Total Datasets Duration...")
     time.sleep(1.5)
     fifth_code(sys.argv[3])
+    print("Successfully measured dataset length.\n")
 
     print("All codes have been executed successfully.")
 
