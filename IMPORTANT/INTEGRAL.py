@@ -302,7 +302,7 @@ def fifth_code(arg3):
 
     l = []
 
-    c = 0
+    sec = 0
     for i in f:
         values = i.split('|')
         if len(values) != 3:
@@ -315,9 +315,11 @@ def fifth_code(arg3):
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
-            c += duration
+            sec += duration
 
-    print("Total datasets length(seconds):", round(c, 2))
+    hours = int(sec // 3600)
+    minutes = int((sec % 3600) // 60)
+    print("Total datasets duration: {}hours {}minutes".format(hours, minutes))
 
 
 def create_config():
