@@ -534,7 +534,7 @@ def main():
     print("Renaming config.json...")
     time.sleep(1.5)
     rename_config_json(sys.argv[2])
-    print("Successfully renamed config.json.")
+    print("Successfully renamed config.json.\n")
 
     print("Measuring Total Datasets Duration...")
     time.sleep(1.5)
