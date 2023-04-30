@@ -1,6 +1,6 @@
 #sys.argv[1] = ex) ko, ja, en, zh
-#sys.argv[2] = ex) korean, japanese, english, chinese
-#sys.argv[3] = ALL transcription saved in this txt. insert model name
+#sys.argv[2] = ALL transcription saved in this txt. insert model name
+#sys.argv[3] = sample rate
 
 import os
 import glob
@@ -21,19 +21,40 @@ from scipy.io import wavfile
 from langdetect import detect
 
 
-def preprocessing_code():
+def preprocessing_code(arg3):
     def convert_mp3_to_wav(root_dir):
+        if not os.path.isdir(root_dir):
+            raise ValueError("The provided root directory does not exist.")
+
         for subdir, dirs, files in os.walk(root_dir):
+            if subdir == root_dir:  # Skip the root directory
+                continue
+
+            wavs_dir = os.path.join(subdir, "wavs")
+            if not os.path.exists(wavs_dir):
+                os.makedirs(wavs_dir)
+
             for file in files:
                 if file.endswith(".mp3"):
                     mp3_filepath = os.path.join(subdir, file)
-                    wav_filepath = os.path.join(subdir, "wavs", os.path.splitext(file)[0] + ".wav")
+                    wav_filename = os.path.splitext(file)[0] + ".wav"
+                    wav_filepath = os.path.join(wavs_dir, wav_filename)
                     print(f"Converting {mp3_filepath} to {wav_filepath}...")
 
-                    subprocess.run(["ffmpeg", "-i", mp3_filepath, "-ar", "44100", wav_filepath])
+                    try:
+                        subprocess.run(["ffmpeg", "-i", mp3_filepath, "-ar", str(arg3), "-ac", "1", wav_filepath], check=True)
+                    except subprocess.CalledProcessError as e:
+                        print(f"Error while converting {mp3_filepath} to {wav_filepath}: {e}")
+
+                elif file.endswith(".wav"):
+                    wav_filepath = os.path.join(subdir, file)
+                    dest_filepath = os.path.join(wavs_dir, file)
+                    print(f"Moving {wav_filepath} to {dest_filepath}...")
+                    shutil.move(wav_filepath, dest_filepath)
 
     root_dir = "./"
     convert_mp3_to_wav(root_dir)
+
 
 
 def first_code():
@@ -222,10 +243,10 @@ def second_code():
             print(f"Renamed '{wav_file}' to '{new_file_path}'")
 
 
-def third_code(arg1, arg2, arg3):
+def third_code(arg1, arg2):
 
     model = whisper.load_model("large")
-    lang_lst = [{arg1}, {arg2}]
+    lang_lst = [{arg1}]
 
     def process_wav_files(speaker_id, wav_folder, transcript_file, top_folder):
         with open(transcript_file, "w", encoding='utf-8') as f:
@@ -249,7 +270,7 @@ def third_code(arg1, arg2, arg3):
                     else:
                         print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
                         f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
-                        with open(os.path.join(top_folder, f"{arg3}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
+                        with open(os.path.join(top_folder, f"{arg2}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
                             all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
 
     def main():
@@ -264,8 +285,8 @@ def third_code(arg1, arg2, arg3):
                 process_wav_files(speaker_id, wav_folder, transcript_file, top_folder)
                 speaker_id += 1
         
-        input_file = f'./{arg3}_train.txt'
-        output_file = f'./{arg3}_val.txt'
+        input_file = f'./{arg2}_train.txt'
+        output_file = f'./{arg2}_val.txt'
 
         select_random_lines(input_file, output_file)
 
@@ -297,8 +318,8 @@ def fourth_code():
         file.write(output.replace('\\"', '"'))
 
 
-def fifth_code(arg3):
-    f = open(f'./{arg3}_train.txt', 'r', encoding='utf-8').read().split('\n')
+def fifth_code(arg2):
+    f = open(f'./{arg2}_train.txt', 'r', encoding='utf-8').read().split('\n')
 
     l = []
 
@@ -319,7 +340,7 @@ def fifth_code(arg3):
 
     hours = int(sec // 3600)
     minutes = int((sec % 3600) // 60)
-    print("Total datasets duration: {}hours {}minutes".format(hours, minutes))
+    print("Total datasets duration: {}hours {}minutes.".format(hours, minutes))
 
 
 def create_config():
@@ -383,12 +404,12 @@ def create_config():
         json.dump(config, file, ensure_ascii=False, indent=2)
 
 
-def sixth_code(arg1, arg3):
+def sixth_code(arg1, arg2):
     with open("config.json", "r", encoding="utf-8") as file:
         config = json.load(file)
 
-    config["data"]["training_files"] = f"../{arg3}_datasets/{arg3}_train.txt.cleaned"
-    config["data"]["validation_files"] = f"../{arg3}_datasets/{arg3}_val.txt.cleaned"
+    config["data"]["training_files"] = f"../{arg2}_datasets/{arg2}_train.txt.cleaned"
+    config["data"]["validation_files"] = f"../{arg2}_datasets/{arg2}_val.txt.cleaned"
 
     wav_files = []
     for root, _, files in os.walk('.'):
@@ -429,7 +450,7 @@ def sixth_code(arg1, arg3):
         json.dump(config, file, ensure_ascii=False, indent=2)
 
 
-def vits_preproess_code(arg1, arg3):
+def vits_preproess_code(arg1, arg2):
     import subprocess
 
     if arg1 == "ko":
@@ -446,8 +467,8 @@ def vits_preproess_code(arg1, arg3):
     script_path = "../vits/preprocess.py"
 
     text_index = "2"
-    filelists_train = f'./{arg3}_train.txt'
-    filelists_val = f'./{arg3}_val.txt'
+    filelists_train = f'./{arg2}_train.txt'
+    filelists_val = f'./{arg2}_val.txt'
     arg1 = text_cleaners
 
     result = subprocess.run(["python", script_path, "--text_index", text_index, "--filelists", filelists_train, filelists_val, "--text_cleaners", arg1], capture_output=True, text=True)
@@ -457,9 +478,9 @@ def vits_preproess_code(arg1, arg3):
     print("stderr:", result.stderr)
 
 
-def rename_config_json(arg3):
+def rename_config_json(arg2):
     old_name = "config.json"
-    new_name = f"{arg3}.json"
+    new_name = f"{arg2}.json"
 
     if os.path.exists(old_name):
         os.rename(old_name, new_name)
@@ -472,7 +493,7 @@ def main():
 
     print("Running Audio Convertion(mp3 to wav, 44.1khz)")
     time.sleep(1.5)
-    preprocessing_code()
+    preprocessing_code(sys.argv[3])
     print("All .mp3 files have been converted to .wav files.\n")
 
     print("Running Audio Seperation...")
@@ -487,12 +508,12 @@ def main():
 
     print("Running Whisper ASR...")
     time.sleep(0.5)
-    third_code(sys.argv[1], sys.argv[2], sys.argv[3])
+    third_code(sys.argv[1], sys.argv[2])
     print("All .wav files have been processed.\n")
 
     print("Running vits preprocess.py...")
     time.sleep(1.5)
-    vits_preproess_code(sys.argv[1], sys.argv[3])
+    vits_preproess_code(sys.argv[1], sys.argv[2])
     print("The cleaner has successfully processed the text file.\n")
 
     print("Creating Speakers ID...")
@@ -507,17 +528,17 @@ def main():
 
     print("Editing config.json...")
     time.sleep(1.5)
-    sixth_code(sys.argv[1], sys.argv[3])
+    sixth_code(sys.argv[1], sys.argv[2])
     print("Successfully edited config.json.\n")
 
     print("Renaming config.json...")
     time.sleep(1.5)
-    rename_config_json(sys.argv[3])
+    rename_config_json(sys.argv[2])
     print("Successfully renamed config.json.")
 
     print("Measuring Total Datasets Duration...")
     time.sleep(1.5)
-    fifth_code(sys.argv[3])
+    fifth_code(sys.argv[2])
     print("Successfully measured dataset length.\n")
 
     print("All codes have been executed successfully.")
