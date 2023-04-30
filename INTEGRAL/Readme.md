@@ -1,4 +1,5 @@
-##DATA PREPARING
+DATA PREPARING
+===============
 
 .mp3 or .wav files are okay.
 
@@ -13,7 +14,8 @@ INTEGRAL
 INTEGRAL.py
 ```
 
-##RUN
+RUN
+=============
 
 python INTEGRAL.py <speaker's target language> <your model name> <wanted_sample_rate>
 
