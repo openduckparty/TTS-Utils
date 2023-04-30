@@ -22,7 +22,7 @@ RUN
 After you have finished running INTEGRAL.py, please open config.json and you have to edit.
 
     
-    INTEGRAL.py, Line 400, "symbols": [' japanese_symbols: ... //korean_symbols: ... //en/zh_symbols: ... ']
+    "symbols": [' japanese_symbols: ... //korean_symbols: ... //en/zh_symbols: ... ']
     
     
 Please delete everything except the language symbol you want. Please remove the first part of "(your_language)_symbols:" and the small quotation marks on the first and last sentences.
