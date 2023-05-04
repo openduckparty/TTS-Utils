@@ -21,7 +21,7 @@ from scipy.io import wavfile
 from langdetect import detect
 
 
-def preprocessing_code(arg3):
+def preprocessing_code(sample_rate):
     def convert_mp3_to_wav(root_dir):
         if not os.path.isdir(root_dir):
             raise ValueError("The provided root directory does not exist.")
@@ -42,7 +42,7 @@ def preprocessing_code(arg3):
                     print(f"Converting {mp3_filepath} to {wav_filepath}...")
 
                     try:
-                        subprocess.run(["ffmpeg", "-i", mp3_filepath, "-ar", str(arg3), "-ac", "1", wav_filepath], check=True)
+                        subprocess.run(["ffmpeg", "-i", mp3_filepath, "-ar", str(sample_rate), "-ac", "1", wav_filepath], check=True)
                     except subprocess.CalledProcessError as e:
                         print(f"Error while converting {mp3_filepath} to {wav_filepath}: {e}")
 
@@ -243,10 +243,10 @@ def second_code():
             print(f"Renamed '{wav_file}' to '{new_file_path}'")
 
 
-def third_code(arg1, arg2):
+def third_code(language_code, model_name):
 
     model = whisper.load_model("large")
-    lang_lst = [{arg1}]
+    lang_lst = [{language_code}]
 
     def process_wav_files(speaker_id, wav_folder, transcript_file, top_folder):
         with open(transcript_file, "w", encoding='utf-8') as f:
@@ -264,13 +264,13 @@ def third_code(arg1, arg2):
                         print(f"Files with different languages requested and recognized: {wav_file}, text: {result['text'].strip()}")
                         continue
                     
-                    if (arg1 == "ko" and detected_lang != "ko") or (arg1 == "jp" and detected_lang != "jp") or (arg1 == "en" and detected_lang != "en") or (arg1 == "zh" and detected_lang != "zh"):
+                    if (language_code == "ko" and detected_lang != "ko") or (language_code == "jp" and detected_lang != "jp") or (language_code == "en" and detected_lang != "en") or (language_code == "zh" and detected_lang != "zh"):
                         continue
 
                     else:
                         print(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}")
                         f.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
-                        with open(os.path.join(top_folder, f"{arg2}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
+                        with open(os.path.join(top_folder, f"{model_name}_train.txt"), "a", encoding='utf-8') as all_transcript_file:
                             all_transcript_file.writelines(f"{wav_folder}/{wav_file}|{speaker_id}|{result['text'].strip()}\n")
 
     def main():
@@ -285,8 +285,8 @@ def third_code(arg1, arg2):
                 process_wav_files(speaker_id, wav_folder, transcript_file, top_folder)
                 speaker_id += 1
         
-        input_file = f'./{arg2}_train.txt'
-        output_file = f'./{arg2}_val.txt'
+        input_file = f'./{model_name}_train.txt'
+        output_file = f'./{model_name}_val.txt'
 
         select_random_lines(input_file, output_file)
 
@@ -318,8 +318,8 @@ def fourth_code():
         file.write(output.replace('\\"', '"'))
 
 
-def fifth_code(arg2):
-    f = open(f'./{arg2}_train.txt', 'r', encoding='utf-8').read().split('\n')
+def fifth_code(model_name):
+    f = open(f'./{model_name}_train.txt', 'r', encoding='utf-8').read().split('\n')
 
     l = []
 
@@ -404,12 +404,12 @@ def create_config():
         json.dump(config, file, ensure_ascii=False, indent=2)
 
 
-def sixth_code(arg1, arg2):
+def sixth_code(language_code, model_name):
     with open("config.json", "r", encoding="utf-8") as file:
         config = json.load(file)
 
-    config["data"]["training_files"] = f"../{arg2}_datasets/{arg2}_train.txt.cleaned"
-    config["data"]["validation_files"] = f"../{arg2}_datasets/{arg2}_val.txt.cleaned"
+    config["data"]["training_files"] = f"../{model_name}_datasets/{model_name}_train.txt.cleaned"
+    config["data"]["validation_files"] = f"../{model_name}_datasets/{model_name}_val.txt.cleaned"
 
     wav_files = []
     for root, _, files in os.walk('.'):
@@ -434,13 +434,13 @@ def sixth_code(arg1, arg2):
     with open("config.json", "w", encoding="utf-8") as file:
         json.dump(config, file, ensure_ascii=False, indent=2)
 
-    if arg1 == "ko":
+    if language_code == "ko":
         config["data"]["text_cleaners"] = ["korean_cleaners"]
-    elif arg1 == "ja":
+    elif language_code == "ja":
         config["data"]["text_cleaners"] = ["japanese_cleaners2"]
-    elif arg1 == "en":
+    elif language_code == "en":
         config["data"]["text_cleaners"] = ["cjke_cleaners2"]
-    elif arg1 == "zh":
+    elif language_code == "zh":
         config["data"]["text_cleaners"] = ["cjke_cleaners2"]
 
     subdirs = [d for d in os.listdir('.') if os.path.isdir(d)]
@@ -450,16 +450,16 @@ def sixth_code(arg1, arg2):
         json.dump(config, file, ensure_ascii=False, indent=2)
 
 
-def vits_preproess_code(arg1, arg2):
+def vits_preproess_code(language_code, model_name):
     import subprocess
 
-    if arg1 == "ko":
+    if language_code == "ko":
         text_cleaners = "korean_cleaners"
-    elif arg1 == "ja":
+    elif language_code == "ja":
         text_cleaners = "japanese_cleaners2"
-    elif arg1 == "en":
+    elif language_code == "en":
         text_cleaners = "cjke_cleaners2"
-    elif arg1 == "zh":
+    elif language_code == "zh":
         text_cleaners = "cjke_cleaners2"
     else:
         return
@@ -467,20 +467,20 @@ def vits_preproess_code(arg1, arg2):
     script_path = "../vits/preprocess.py"
 
     text_index = "2"
-    filelists_train = f'./{arg2}_train.txt'
-    filelists_val = f'./{arg2}_val.txt'
-    arg1 = text_cleaners
+    filelists_train = f'./{model_name}_train.txt'
+    filelists_val = f'./{model_name}_val.txt'
+    language_code = text_cleaners
 
-    result = subprocess.run(["python", script_path, "--text_index", text_index, "--filelists", filelists_train, filelists_val, "--text_cleaners", arg1], capture_output=True, text=True)
+    result = subprocess.run(["python", script_path, "--text_index", text_index, "--filelists", filelists_train, filelists_val, "--text_cleaners", language_code], capture_output=True, text=True)
 
     print("Return code:", result.returncode)
     print("stdout:", result.stdout)
     print("stderr:", result.stderr)
 
 
-def rename_config_json(arg2):
+def rename_config_json(model_name):
     old_name = "config.json"
-    new_name = f"{arg2}.json"
+    new_name = f"{model_name}.json"
 
     if os.path.exists(old_name):
         os.rename(old_name, new_name)
