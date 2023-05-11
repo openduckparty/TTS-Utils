@@ -21,9 +21,9 @@ RUN
 
 After you have finished running INTEGRAL.py, please open config.json and you have to edit.
 
-    "symbols": [' japanese_symbols: ... //korean_symbols: ... //en/zh_symbols: ... ']
+    "symbols": []
     
-Please delete everything except the language symbol you want. Please remove the first part of "(your_language)_symbols:" and the small quotation marks on the first and last sentences.
+Please refer to the .json file in the VITS/config folder and modify the symbols part.
 
 and VITS Training!
     
