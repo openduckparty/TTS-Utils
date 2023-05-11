@@ -23,7 +23,7 @@ After you have finished running INTEGRAL.py, please open config.json and you hav
 
     "symbols": []
     
-Please refer to the .json file in the VITS/config folder and modify the symbols part.
+Please refer to the .json file in the VITS/config folder and modify the symbols part. And please go into the text folder in vits and change symbols.py to your cleaner.
 
 and VITS Training!
     
