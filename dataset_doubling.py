@@ -10,7 +10,7 @@ with open(output_file_path, 'w', encoding='utf-8') as output_file:
                 new_line = line.replace('|0|', f'|{speaker_id}|')
                 output_file.write(new_line)
 
-            if speaker_id < 70:
+            if speaker_id < 69:
                 output_file.write('\n')
 
 print("뻥튀기 완료!")
