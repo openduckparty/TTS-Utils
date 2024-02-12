@@ -2,7 +2,7 @@ input_file_path = './jsut_train.txt'
 output_file_path = './jsut_train2.txt'
 
 with open(output_file_path, 'w', encoding='utf-8') as output_file:
-    for speaker_id in range(71):
+    for speaker_id in range(70):
         with open(input_file_path, 'r', encoding='utf-8') as input_file:
             lines = input_file.readlines()
 
