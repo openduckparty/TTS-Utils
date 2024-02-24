@@ -18,9 +18,7 @@ for subdir, dirs, _ in os.walk('.'):
             if file.endswith('.ogg'):
                 input_file = os.path.join(wavs_path, file)
                 output_file = os.path.join(converted_wavs_path, f"{os.path.splitext(file)[0]}.wav")
+                subprocess.run(['ffmpeg', '-i', input_file, '-ar', '44100', '-ac', '1', output_file])
 
-                # ffmpeg를 사용하여 .ogg 파일을 .wav 파일로 변환 (샘플 레이트: 44100hz)
-                subprocess.run(['ffmpeg', '-i', input_file, '-ar', '44100', output_file])
-
-        shutil.rmtree(wavs_path)  # 추가
+        shutil.rmtree(wavs_path)
         
